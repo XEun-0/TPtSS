@@ -1,0 +1,5 @@
+1. hp bar, orb collection, "counter" for human data => GUI
+2. Fix player control + camera control
+3. Enemy AI and implement Navmesh
+4. Document + Video w/ VO
+Sunday 30th 11:59
