@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PickUp
   - Barrier
+  - Enemy_Head
   layers:
   - Default
   - TransparentFX

@@ -52,9 +52,8 @@ public class SlimeController : MonoBehaviour
 
     void onJump(InputAction.CallbackContext ctx) {
         isJumpPressed = ctx.ReadValueAsButton();
-        Debug.Log(isJumpPressed);
         //If holding jump && ready to jump, then jump
-        if (readyToJump && grounded) Jump();
+        if (readyToJump && grounded) JumpCheck();
     }
 
     private void OnMove(InputValue movementValue)
@@ -113,6 +112,17 @@ public class SlimeController : MonoBehaviour
             other.gameObject.SetActive(false);
             changeToLiquid();
         }
+
+        if (other.gameObject.CompareTag("Enemy_Head"))
+        {
+            Debug.Log("Enemy Head");
+            Jump();
+            
+            GameObject enemy = other.gameObject.transform.root.gameObject;
+            Debug.Log(enemy.name);
+            if(enemy.TryGetComponent<EnemyAI>(out EnemyAI aiComponent))
+                aiComponent.TakeDamage(10);
+        }
     }
 #region Jumping
     private bool cancellingGrounded;
@@ -154,23 +164,27 @@ public class SlimeController : MonoBehaviour
         countText.text = "Liquid Data: " + liqCount.ToString();
     }
 
-    void Jump() {
+    void JumpCheck() {
         if (grounded) { 
-            readyToJump = false;
-
-            //Add jump forces
-            rb.AddForce(Vector3.up * jumpForce * 1.5f);
-            rb.AddForce(normalVector * jumpForce * 0.5f);
-
-            //If jumping while falling, reset y velocity.
-            Vector3 vel = rb.velocity;
-            if (rb.velocity.y < 0.5f)
-                rb.velocity = new Vector3(vel.x, 0, vel.z);
-            else if (rb.velocity.y > 0)
-                rb.velocity = new Vector3(vel.x, vel.y / 2, vel.z);
-
-            Invoke(nameof(ResetJump), jumpCooldown);
+            Jump();
         }
+    }
+
+    void Jump() {
+        readyToJump = false;
+
+        //Add jump forces
+        rb.AddForce(Vector3.up * jumpForce * 1.5f);
+        rb.AddForce(normalVector * jumpForce * 0.5f);
+
+        //If jumping while falling, reset y velocity.
+        Vector3 vel = rb.velocity;
+        if (rb.velocity.y < 0.5f)
+            rb.velocity = new Vector3(vel.x, 0, vel.z);
+        else if (rb.velocity.y > 0)
+            rb.velocity = new Vector3(vel.x, vel.y / 2, vel.z);
+
+        Invoke(nameof(ResetJump), jumpCooldown);
     }
 
     private void ResetJump()

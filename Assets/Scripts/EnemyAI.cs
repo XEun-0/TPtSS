@@ -2,16 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class EnemyAI : MonoBehaviour
 {
     public NavMeshAgent agent;
+    // Add particle, use when robot is defeated -------
+    public ParticleSystem collisionParticleSystem;
 
     public Transform player;
+    public Transform head;
+    public Transform lookObject;
     public GameObject gun;
 
     //Stats
-    public int health;
+    public float health;
+    [SerializeField]
+    public float maxHealth;
+
+    [SerializeField]
+    public GameObject healthBarUI;
+    public Slider slider;
 
     //Check for Ground/Obstacles
     public LayerMask whatIsGround, whatIsPlayer;
@@ -33,11 +44,14 @@ public class EnemyAI : MonoBehaviour
     private void Awake() {
         player = GameObject.Find("Slime").transform;
         agent = GetComponent<NavMeshAgent>();
+        health = maxHealth;
+        slider.value = CalculateHealth();
     }
     private void Update()
     {
         if (!isDead)
         {
+            slider.value = CalculateHealth();
             //Check if Player in sightrange
             playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
 
@@ -49,11 +63,16 @@ public class EnemyAI : MonoBehaviour
             if (playerInAttackRange && playerInSightRange) AttackPlayer();
         }
     }
+
+    private float CalculateHealth() {
+        return health / maxHealth;
+    }
     
     private void Patrolling()
     {
         if (isDead) return;
 
+        head.LookAt(lookObject);
         if (!walkPointSet) SearchWalkPoint();
 
         //Calculate direction and walk to Point
@@ -86,6 +105,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (isDead) return;
 
+        head.LookAt(player);
         agent.SetDestination(player.position);
     }
 
@@ -94,7 +114,22 @@ public class EnemyAI : MonoBehaviour
         if (isDead) return;
         
         //No implementation yet
-        transform.LookAt(player);
+        head.LookAt(player);
+    }
+
+    // Robot takes damages and will be defeat by player
+    // Add "death effect" or particles when robot is defeated
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        
+        if(health <= 0)
+        {
+            //collisionParticleSystem.Play();
+            
+            this.isDead = true;
+            Destroy(gameObject);
+        }
     }
 
 #region Gizmos
