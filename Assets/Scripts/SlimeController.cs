@@ -8,9 +8,14 @@ public class SlimeController : MonoBehaviour
 {
     private Vector3 normalVector = Vector3.up;
     public float maxSlopeAngle = 35f;
+    public Transform orientation;
+    Vector3 moveDirection;
+    public float moveSpeed;
+    public float airMultiplier;
 
     public float speed = 0;
     public float jSpeed = 5;
+    public float rotationSpeed = 5;
     public TextMeshProUGUI countText;
 
     private Rigidbody rb;
@@ -66,8 +71,21 @@ public class SlimeController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 movement = new Vector3(movementX, 0.0f, movementY);
-        rb.AddForce(movement * speed);
+        MovePlayer();
+    }
+
+    private void MovePlayer()
+    {
+        // calculate movement direction
+        moveDirection = orientation.forward * movementY + orientation.right * movementX;
+
+        // on ground
+        if(grounded)
+            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+
+        // in air
+        else if(!grounded)
+            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
     void changeToLiquid()

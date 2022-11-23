@@ -106,7 +106,7 @@ public class EnemyAI : MonoBehaviour
         if (isDead) return;
 
         head.LookAt(player);
-        agent.SetDestination(player.position);
+        agent.SetDestination(player.position - new Vector3(0,0,3));
     }
 
     private void AttackPlayer()
