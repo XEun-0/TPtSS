@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class SlimeController : MonoBehaviour
 {
@@ -13,9 +14,6 @@ public class SlimeController : MonoBehaviour
     public float moveSpeed;
     public float airMultiplier;
 
-    public float speed = 0;
-    public float jSpeed = 5;
-    public float rotationSpeed = 5;
     public TextMeshProUGUI countText;
 
     private Rigidbody rb;
@@ -52,6 +50,7 @@ public class SlimeController : MonoBehaviour
         pi.Player.Fire.performed += ctx => changeToLiquid();
         pi.Player.Jump.started += onJump;
         pi.Player.Jump.canceled += onJump;
+        pi.Player.Reset.performed += ctx => resetStage();
         //SetCountText();
     }
 
@@ -214,5 +213,9 @@ public class SlimeController : MonoBehaviour
     {
         float angle = Vector3.Angle(Vector3.up, v);
         return angle < maxSlopeAngle;
+    }
+
+    private void resetStage() {
+        SceneManager.LoadScene("AnimMoveTest");
     }
 }
