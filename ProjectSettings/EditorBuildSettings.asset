@@ -12,6 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu.unity
     guid: d28a5e1911027f24a9d2cbfba3c92dea
   - enabled: 1
-    path: Assets/Scenes/AnimMoveTest.unity
+    path: Assets/Scenes/stage0.unity
     guid: 54aed5c2a374ddd47a4967e27ade4482
   m_configObjects: {}
