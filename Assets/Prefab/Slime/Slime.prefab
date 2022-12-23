@@ -59,8 +59,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 463107538982210901}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.3, y: 0.49, z: -43.82}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -51.58, y: -3.54, z: -34.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -69,7 +69,7 @@ Transform:
   - {fileID: 8663788330157649276}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &463107538982210895
 Animator:
   serializedVersion: 4
@@ -133,15 +133,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d75a73f4e40b16a468c421c9a24468ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCamera: {fileID: 0}
   maxSlopeAngle: 35
   orientation: {fileID: 8663788330157649276}
   moveSpeed: 3
   airMultiplier: 0.1
   countText: {fileID: 0}
+  movementForce: 1
+  jumpForce: 200
+  maxSpeed: 5
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  jumpForce: 200
   startDoubleJumps: 0
 --- !u!54 &463107538982210890
 Rigidbody:
@@ -199,13 +202,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 769024871322151228}
   m_LocalRotation: {x: -0.5, y: -0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.00999999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 463107538982210900}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: -90}
+  m_LocalEulerAnglesHint: {x: -90, y: 90, z: -180}
 --- !u!33 &3911423770558446627
 MeshFilter:
   m_ObjectHideFlags: 0

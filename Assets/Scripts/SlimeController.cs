@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class SlimeController : MonoBehaviour
 {
+    [SerializeField]
+    private Camera playerCamera;
     private Vector3 normalVector = Vector3.up;
     public float maxSlopeAngle = 35f;
     public Transform orientation;
@@ -18,11 +20,17 @@ public class SlimeController : MonoBehaviour
 
     private Rigidbody rb;
 
-    private float movementX;
-    private float movementY;
-
     private PlayerControl pi;
+    private InputAction move;
     private float liqCount = 0;
+
+    [SerializeField]
+    private float movementForce = 1f;
+    [SerializeField]
+    private float jumpForce = 5f;
+    [SerializeField]
+    private float maxSpeed = 5f;
+    private Vector3 forceDirection = Vector3.zero;
 
     Animator anim;
 
@@ -35,7 +43,6 @@ public class SlimeController : MonoBehaviour
     //Jumping
     private bool readyToJump = true;
     private float jumpCooldown = 0.25f;
-    public float jumpForce = 550f;
 
     //Gas Form "Double Jump"
     public int startDoubleJumps = 1;
@@ -60,31 +67,49 @@ public class SlimeController : MonoBehaviour
         if (readyToJump && grounded) JumpCheck();
     }
 
-    private void OnMove(InputValue movementValue)
-    {
-        Vector2 movementVector = movementValue.Get<Vector2>();
-
-        movementX = movementVector.x;
-        movementY = movementVector.y;
-    }
-
     private void FixedUpdate()
     {
-        MovePlayer();
+        forceDirection += move.ReadValue<Vector2>().x * GetCameraRight(playerCamera) * movementForce;
+        forceDirection += move.ReadValue<Vector2>().y * GetCameraForward(playerCamera) * movementForce;
+
+        rb.AddForce(forceDirection, ForceMode.Impulse);
+        forceDirection = Vector3.zero;
+
+        if (rb.velocity.y < 0f)
+            rb.velocity -= Vector3.down * Physics.gravity.y * Time.fixedDeltaTime;
+
+        Vector3 horizontalVelocity = rb.velocity;
+        horizontalVelocity.y = 0;
+        if (horizontalVelocity.sqrMagnitude > maxSpeed * maxSpeed)
+            rb.velocity = horizontalVelocity.normalized * maxSpeed + Vector3.up * rb.velocity.y;
+
+        LookAt();
+        //MovePlayer();
     }
 
-    private void MovePlayer()
+    private void LookAt()
     {
-        // calculate movement direction
-        moveDirection = orientation.forward * movementY + orientation.right * movementX;
+        Vector3 direction = rb.velocity;
+        direction.y = 0f;
 
-        // on ground
-        if(grounded)
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+        if (move.ReadValue<Vector2>().sqrMagnitude > 0.1f && direction.sqrMagnitude > 0.1f)
+            this.rb.rotation = Quaternion.LookRotation(direction, Vector3.up);
+        else
+            rb.angularVelocity = Vector3.zero;
+    }
 
-        // in air
-        else if(!grounded)
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+    private Vector3 GetCameraForward(Camera playerCamera)
+    {
+        Vector3 forward = playerCamera.transform.forward;
+        forward.y = 0;
+        return forward.normalized;
+    }
+
+    private Vector3 GetCameraRight(Camera playerCamera)
+    {
+        Vector3 right = playerCamera.transform.right;
+        right.y = 0;
+        return right.normalized;
     }
 
     void changeToLiquid()
@@ -107,6 +132,7 @@ public class SlimeController : MonoBehaviour
 
     void OnEnable()
     {
+        move = pi.Player.Move;
         pi.Player.Enable();
     }
 
@@ -215,7 +241,9 @@ public class SlimeController : MonoBehaviour
         return angle < maxSlopeAngle;
     }
 
+#region Debugging Methods
     private void resetStage() {
-        SceneManager.LoadScene("AnimMoveTest");
+        SceneManager.LoadScene("LevelSelector");
     }
+#endregion
 }
